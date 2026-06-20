@@ -1,7 +1,6 @@
 "use client";
 
 import { FormEvent, useState } from "react";
-import type { User } from "@/lib/types";
 
 type Props = {
   onLogin: (payload: { email: string; password: string; mode: "login" | "register"; name?: string }) => Promise<void>;
