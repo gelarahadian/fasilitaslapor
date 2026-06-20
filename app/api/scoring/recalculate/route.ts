@@ -6,15 +6,27 @@ import { prisma } from "@/lib/prisma";
 import { jsonError } from "@/lib/api-utils";
 import { calculateServerPriority } from "@/lib/server-scoring";
 
+type ReportForRecalculation = {
+  id: string;
+  initialDamage: number;
+  duplicateCount: number;
+  createdAt: Date;
+  status: string;
+  validations: Array<{
+    severity: number;
+    decision: string;
+  }>;
+};
+
 export async function POST() {
   try {
     await requireAdmin();
     const weights = await prisma.priorityWeight.findFirst({ orderBy: { createdAt: "desc" } });
     if (!weights) return jsonError("Konfigurasi bobot priority scoring belum tersedia", 404);
 
-    const reports = await prisma.report.findMany({ include: { validations: true } });
+    const reports = await prisma.report.findMany({ include: { validations: true } }) as ReportForRecalculation[];
     const updated = await Promise.all(
-      reports.map((report) =>
+      reports.map((report: ReportForRecalculation) =>
         prisma.report.update({
           where: { id: report.id },
           data: { priorityScore: calculateServerPriority(report, weights) }
