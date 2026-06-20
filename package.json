@@ -1,0 +1,42 @@
+{
+  "name": "fasilitas-lapor",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
+    "db:generate": "prisma generate",
+    "db:push": "prisma db push",
+    "db:seed": "prisma db seed",
+    "db:migrate": "prisma migrate dev",
+    "db:deploy": "prisma migrate deploy",
+    "storage:setup": "node scripts/setup-storage.mjs"
+  },
+  "dependencies": {
+    "@prisma/adapter-pg": "^7.8.0",
+    "@prisma/client": "^7.8.0",
+    "@supabase/supabase-js": "^2.108.2",
+    "@types/pg": "^8.20.0",
+    "bcryptjs": "^3.0.3",
+    "jose": "^6.2.3",
+    "next": "^14.2.5",
+    "pg": "^8.22.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "zod": "^4.4.3"
+  },
+  "devDependencies": {
+    "@types/node": "^20.14.10",
+    "@types/react": "^18.3.3",
+    "@types/react-dom": "^18.3.0",
+    "eslint": "^8.57.0",
+    "eslint-config-next": "^14.2.5",
+    "prisma": "^7.8.0",
+    "typescript": "^5.5.4"
+  },
+  "prisma": {
+    "seed": "node prisma/seed.mjs"
+  }
+}

@@ -1,0 +1,79 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum UserRole {
+  USER
+  ADMIN
+}
+
+enum ReportStatus {
+  MENUNGGU_VALIDASI
+  TERVALIDASI
+  DIPROSES
+  SELESAI
+  DITOLAK
+}
+
+enum ValidationDecision {
+  KONFIRMASI
+  TOLAK
+}
+
+model User {
+  id        String       @id @default(uuid())
+  name      String
+  email     String       @unique
+  password  String
+  role      UserRole     @default(USER)
+  reports   Report[]
+  validations Validation[]
+  createdAt DateTime     @default(now())
+  updatedAt DateTime     @updatedAt
+}
+
+model Report {
+  id            String       @id @default(uuid())
+  userId        String
+  title         String
+  category      String
+  initialDamage Int
+  description   String
+  location      String
+  photoUrl      String?
+  incidentDate  DateTime
+  status        ReportStatus @default(MENUNGGU_VALIDASI)
+  duplicateCount Int         @default(0)
+  priorityScore Decimal      @default(0)
+  user          User         @relation(fields: [userId], references: [id])
+  validations   Validation[]
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
+}
+
+model Validation {
+  id        String             @id @default(uuid())
+  userId    String
+  reportId  String
+  severity  Int
+  decision  ValidationDecision
+  user      User               @relation(fields: [userId], references: [id])
+  report    Report             @relation(fields: [reportId], references: [id])
+  createdAt DateTime           @default(now())
+
+  @@unique([userId, reportId])
+}
+
+model PriorityWeight {
+  id          String   @id @default(uuid())
+  damage      Decimal  @default(10)
+  validation  Decimal  @default(1.2)
+  duplication Decimal  @default(3)
+  time        Decimal  @default(0.7)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
