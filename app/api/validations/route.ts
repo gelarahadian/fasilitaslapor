@@ -1,7 +1,6 @@
 export const dynamic = "force-dynamic";
 
 import { NextResponse } from "next/server";
-import { ValidationDecision } from "@prisma/client";
 import { ZodError } from "zod";
 import { getSessionUser } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
@@ -15,7 +14,7 @@ export async function POST(request: Request) {
     if (!sessionUser) return jsonError("Anda harus login untuk memberi validasi", 401);
 
     const body = validationCreateSchema.parse(await request.json());
-    const decision = toPrismaDecision(body.decision) as ValidationDecision;
+    const decision = toPrismaDecision(body.decision) as "KONFIRMASI" | "TOLAK";
 
     const reportOwner = await prisma.report.findUnique({ where: { id: body.reportId }, select: { userId: true } });
     if (!reportOwner) return jsonError("Laporan tidak ditemukan", 404);

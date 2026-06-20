@@ -1,7 +1,6 @@
 export const dynamic = "force-dynamic";
 
 import { NextResponse } from "next/server";
-import { ReportStatus } from "@prisma/client";
 import { ZodError } from "zod";
 import { requireAdmin } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
@@ -12,7 +11,7 @@ export async function PATCH(request: Request, { params }: { params: { id: string
   try {
     await requireAdmin();
     const body = statusUpdateSchema.parse(await request.json());
-    const status = toPrismaStatus(body.status) as ReportStatus;
+    const status = toPrismaStatus(body.status) as "MENUNGGU_VALIDASI" | "TERVALIDASI" | "DIPROSES" | "SELESAI" | "DITOLAK";
 
     const report = await prisma.report.update({
       where: { id: params.id },
